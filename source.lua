@@ -180,7 +180,7 @@ task.spawn(function()
     while true do
         if State.AutoCatch then
             local btn = getAutoCatchButton()
-            if btn and btn:IsA("ImageButton") or btn:IsA("TextButton") then
+            if btn and (btn:IsA("ImageButton") or btn:IsA("TextButton")) then
                 pcall(function()
                     btn:Activate()
                 end)
@@ -193,9 +193,9 @@ end)
 -- Auto Hatch: loop AccelerateHatch on HatcherController
 task.spawn(function()
     while true do
-        if State.AutoHatch and Controllers.Egg then
+        if State.AutoHatch and Controllers.AutoCatch then
             pcall(function()
-                Controllers.Egg:AccelerateHatch(State.SelectedEgg or nil, State.HatchAmount or 1)
+                Controllers.AutoCatch:AccelerateHatch(State.SelectedEgg or nil, State.HatchAmount or 1)
             end)
         end
         task.wait(0.4)
@@ -269,24 +269,29 @@ areaRow:FindFirstChildOfClass("TextButton").MouseButton1Click:Connect(function()
 end)
 
 --// ============================================================
---// Unload
+--// Keybind + Unload
 --// ============================================================
-GnurtHub = {
-    Unload = function()
-        for k, _ in pairs(State) do State[k] = false end
-        if ScreenGui and ScreenGui.Parent then
-            ScreenGui:Destroy()
-        end
-        GnurtHub = nil
-    end,
-}
-
--- keybind to toggle menu (RightShift)
-UserInputService.InputBegan:Connect(function(input, gpe)
+local ToggleConnection = UserInputService.InputBegan:Connect(function(input, gpe)
     if gpe then return end
-    if input.KeyCode == Enum.KeyCode.RightShift then
+    if input.KeyCode == Enum.KeyCode.RightShift and MainFrame then
         MainFrame.Visible = not MainFrame.Visible
     end
 end)
+
+GnurtHub = {
+    Unload = function()
+        for k, _ in pairs(State) do State[k] = false end
+        if ToggleConnection then
+            pcall(function() ToggleConnection:Disconnect() end)
+            ToggleConnection = nil
+        end
+        if ScreenGui and ScreenGui.Parent then
+            pcall(function() ScreenGui:Destroy() end)
+        end
+        ScreenGui = nil
+        MainFrame = nil
+        GnurtHub = nil
+    end,
+}
 
 print("[GnurtHub] Blox Monster loaded. Press RightShift to toggle menu.")
