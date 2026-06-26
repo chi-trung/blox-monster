@@ -1,0 +1,17 @@
+# Roblox
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+
+# Lua
+*.luau.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
