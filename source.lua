@@ -96,6 +96,32 @@ TitleLabel.Font = Enum.Font.GothamBold
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.Parent = TitleBar
 
+-- Close button (hide GUI)
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+CloseBtn.Position = UDim2.new(1, -60, 0.5, -12)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+CloseBtn.Text = "✕"
+CloseBtn.TextColor3 = Color3.new(1, 1, 1)
+CloseBtn.TextSize = 12
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.BorderSizePixel = 0
+CloseBtn.Parent = TitleBar
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+-- Minimize button
+local MinBtn = Instance.new("TextButton")
+MinBtn.Size = UDim2.new(0, 24, 0, 24)
+MinBtn.Position = UDim2.new(1, -32, 0.5, -12)
+MinBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+MinBtn.Text = "−"
+MinBtn.TextColor3 = Color3.new(1, 1, 1)
+MinBtn.TextSize = 14
+MinBtn.Font = Enum.Font.GothamBold
+MinBtn.BorderSizePixel = 0
+MinBtn.Parent = TitleBar
+Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
+
 -- container for toggles
 local Body = Instance.new("Frame")
 Body.Size = UDim2.new(1, -16, 1, -44)
@@ -278,7 +304,21 @@ local ToggleConnection = UserInputService.InputBegan:Connect(function(input, gpe
     end
 end)
 
+-- Close button: hide GUI (can reopen with RightShift)
+CloseBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
+-- Minimize button: collapse body
+local minimized = false
+MinBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    Body.Visible = not minimized
+    MinBtn.Text = minimized and "+" or "−"
+end)
+
 GnurtHub = {
+    State = State,  -- expose for testing
     Unload = function()
         for k, _ in pairs(State) do State[k] = false end
         if ToggleConnection then
