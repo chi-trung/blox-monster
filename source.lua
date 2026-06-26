@@ -314,6 +314,9 @@ local minimized = false
 MinBtn.MouseButton1Click:Connect(function()
     minimized = not minimized
     Body.Visible = not minimized
+    MainFrame.Size = minimized
+        and UDim2.new(0, 420, 0, 32)
+        or UDim2.new(0, 420, 0, 320)
     MinBtn.Text = minimized and "+" or "−"
 end)
 
